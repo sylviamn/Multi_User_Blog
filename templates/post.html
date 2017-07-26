@@ -1,0 +1,39 @@
+<!--Post section-->
+  
+<div class="row">
+  <div class="well" >
+    <div class="post-heading">
+      <div class="post-title">
+        <a href= {{ '/blog/' ~ p.key().id() }}> {{p.subject}}</a>
+        <font size="2"> Created By: {{createdby}} </font>
+      </div>
+      <div class="post-date">
+        {{p.created.strftime("%b %d, %Y")}}
+      </div>
+    </div>
+    <div class="post-content">
+      {{p._render_text | safe}}
+    </div>
+    <div>
+      <br><br>
+      {% if username == createdby %}
+        <button type="button"> <a href= {{ '/blog/' ~ p.key().id() ~ '/editpost'}}>Edit</a></button>
+        <button type="button"> <a href= {{ '/blog/' ~ p.key().id() ~ '/deletepost'}}>Delete</a></button>
+      {% endif %}
+      {% if username != createdby %} 
+        {% if not likeuser %}
+          <button type="button"> <a href= {{ '/blog/' ~ p.key().id() ~ '/likepost'}}>Like</a></button>
+        {% else %}
+          <button type="button"> <a href= {{ '/blog/' ~ p.key().id() ~ '/unlikepost'}}>Unlike</a></button>
+        {% endif%}
+      {% endif %}
+      <button type="button"> <a href= {{ '/blog/' ~ p.key().id() ~ '/newcomment'}}>Comment</a></button>
+       ({{likecount}} likes)
+       |
+       (<u><a href={{ '/blog/' ~ p.key().id() }}>{{commentcount}} comments</a></u>)
+    </div>
+  </div>
+</div>
+
+    
+

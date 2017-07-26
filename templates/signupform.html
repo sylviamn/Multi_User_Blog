@@ -1,0 +1,49 @@
+<!--Page showing sign up form-->
+
+
+<!--Header-->
+{% extends "header.html" %}
+
+<!--page content-->
+{% block content %}
+
+<h1>Sign Up</h1>
+    
+<!--Form to sign up-->
+<div class="col-xs-12 col-sm-12">
+  <p class="pull-right visible-xs">
+    <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
+  </p>
+  <div class="row">
+    <div class="well3" >
+      <form method = 'post'>
+        <h3>Username:</h3>
+          <input type='text' size='30' name='username' value="{{username}}">
+            <div class="error">
+              {{error_username}}
+            </div>
+        <h3>Password:</h3>
+          <input type='password' size='30' name='password' value="">
+            <div class="error">
+              {{error_password}}
+            </div>
+        <h3>Verify Password:</h3>
+          <input type='password' size='30' name='verify' value="">
+            <div class="error">
+              {{error_verify}}
+            </div>
+        <h3>Email (optional):</h3>
+          <input type='text' size='30' name='email' value="{{email}}">
+            <div class="error">
+              {{error_email}}
+            </div>
+        </br>
+        </br>
+        <input type='submit' value='Sign Up'>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

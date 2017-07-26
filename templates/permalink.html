@@ -1,0 +1,24 @@
+<!--Page showing single post entry and post comments-->
+
+<!--Header-->
+{% extends "header.html" %}
+
+<!--page content-->
+{% block content %}
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<!--post entry details-->
+   {{post.render(user.key().id()) | safe}}
+   <br>
+   <br>
+   <h3>Comments</h3>
+   <!--list of comments-->
+   {% for c in comments %}
+   	{{ c.render(user.key().id()) | safe }}
+   {% endfor %}
+
+{% endblock %}

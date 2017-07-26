@@ -1,0 +1,23 @@
+<!--Page showing list of post entries-->
+
+<!--Header-->
+{% extends "header.html" %}
+
+<!--page content-->
+{% block content %}
+   <br>
+   <br>
+   <br>
+   <!--button to add new post-->
+   <button type="button"> <a href = '/blog/newpost'>Add New Post</a></button>
+   <br>
+   <br>
+
+   <!-- list of post entries -->
+  {% for p in posts %}
+    {{ p.render(user.key().id()) | safe }}
+    <br>
+    <br>
+  {% endfor %}
+
+{% endblock %}

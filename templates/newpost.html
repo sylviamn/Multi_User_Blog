@@ -1,0 +1,36 @@
+<!--Page showing form to add new post-->
+
+
+<!--Header-->
+{% extends "header.html" %}
+
+<!--page content-->
+{% block content %}
+  
+<h1>New Post</h1>
+
+<!--Form to add new post-->
+<div class="col-xs-12 col-sm-12">
+  <p class="pull-right visible-xs">
+    <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
+  </p>
+  <div class="row">
+    <div class="well3" >
+      <form method = 'post'>
+        <h3>Subject:</h3>
+          <input type='text' size='30' name='subject' value="{{subject}}">
+        <h3>Blog:</h3>
+          <textarea name='content'>{{content}}</textarea>
+        <div class="error">
+          {{error}}
+        </div>
+        </br>
+        </br>
+        <input type='submit' value='Submit'>
+        <button type="button"> <a href = '/blog'>Cancel</a></button>
+      </form>
+    </div>
+  </div>
+</div>
+        
+{% endblock %}

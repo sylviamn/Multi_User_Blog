@@ -1,0 +1,69 @@
+<!--Header displayed on every page-->
+<!DOCTYPE html>
+<html>
+	<head>
+	  <!--css style sheets-->
+	  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	  <link type="text/css" rel="stylesheet" href="/static/style.css" />
+	</head>
+
+	<body>
+		<!--Navigation Bar at top of page -->
+		<nav class="navbar navbar-default navbar-fixed-top">
+		  <div class="container">
+			<div class="navbar-header">
+				<!--Main header text (links to main page listing blog entries when clicked) -->
+				<a class="navbar-brand" href="/blog"><font size="6">Multi User Blog</font></a>
+			</div>
+			<!--Show logout button if user logged in -->
+			{% if user %}
+				<div id="navbar" class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+	      					<a><font size="3">)</font></a>
+	      				</li>
+	      			</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+	      					<a href="/logout"><font size="3">Logout</font></a>
+	      				</li>
+	      			</ul>
+	      			<ul class="nav navbar-nav navbar-right">
+						<li>
+	      					<a><font size="3">{{user.name}} (</font></a>
+	      				</li>
+	      			</ul>
+	      		</div>
+	      	<!--Show login or sign up button if user not logged in -->
+    		{% else %}
+    			<div id="navbar" class="navbar-collapse collapse"> 
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+	      					<a href="/login"><font size="3">Login</font></a>
+	      				</li>
+	      			</ul>
+	      			<ul class="nav navbar-nav navbar-right">
+						<li>
+	      					<a><font size="3">|</font></a>
+	      				</li>
+	      			</ul>
+	      			<ul class="nav navbar-nav navbar-right">
+						<li>
+	      					<a href="/signup"><font size="3">Sign Up</font></a>
+	      				</li>
+	      			</ul>
+	      		</div>		
+    		{% endif %}
+		  </div>
+		</nav>
+	
+		<!-- Code for page content -->
+		<div class="container">
+			{% block content %}
+			{% endblock %}
+		</div>	
+	</body>
+</html>
+
+		
+		

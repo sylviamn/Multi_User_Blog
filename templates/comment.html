@@ -1,0 +1,24 @@
+<!--Comment section-->
+  
+<div class="row">
+  <div class="well2" >
+    <div class="post-heading">
+      <div class="post-title">
+        <font size="2"> {{createdby}} </font>
+      </div>
+      <div class="post-date">
+        {{c.created.strftime("%b %d, %Y")}}
+      </div>
+    </div>
+    <div class="post-content">
+      {{c._render_text | safe}}
+    </div>
+    <div>
+      <br><br>
+      {% if username == createdby %}
+        <button type="button"> <a href= {{ '/blog/' ~ c.post_id ~ '/' ~ c.key().id() ~ '/editcomment'}}>Edit</a></button>
+        <button type="button"> <a href= {{ '/blog/' ~ c.post_id ~ '/' ~ c.key().id() ~ '/deletecomment'}}>Delete</a></button>
+      {% endif %}
+    </div>
+  </div>
+</div>
