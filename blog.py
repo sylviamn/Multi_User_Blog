@@ -294,10 +294,10 @@ class MainPage(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
-
-        #get top 10 posts and show in order of created date
-        posts = db.GqlQuery("select * from Post order by created desc limit 10")
-        self.render('blog.html', posts = posts)
+        else:
+            #get top 10 posts and show in order of created date
+            posts = db.GqlQuery("select * from Post order by created desc limit 10")
+            self.render('blog.html', posts = posts)
 
 
 ### Single post page ###
@@ -306,18 +306,19 @@ class BlogPage(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get post entity info
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
         post = db.get(key)
 
-        #get post comments
-        comments = Comment.all().filter('post_id =', int(post_id)).order('-created')
-
         #if post does not exist show error
         if not post:
             self.error(404)
             return
+
+        #get post comments
+        comments = Comment.all().filter('post_id =', int(post_id)).order('-created')
 
         #load single post page
         self.render("permalink.html", post = post, comments = comments)
@@ -336,6 +337,7 @@ class NewPost(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get post info from form
         subject = self.request.get('subject')
@@ -358,17 +360,19 @@ class EditPost(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get post entity info
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
         post = db.get(key)
-        subject = post.subject
-        content = post.content
 
         #if post does not exist show error
         if not post:
             self.error(404)
             return
+
+        subject = post.subject
+        content = post.content
 
         #user can only edit posts they created
         if self.user.key().id() == post.user_id:
@@ -381,6 +385,7 @@ class EditPost(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get updated post attributes from form
         subject = self.request.get('subject')
@@ -388,16 +393,25 @@ class EditPost(BlogHandler):
 
         #check for valid entries
         if subject and content:
-            #set existing post attributes to new attributes
             key = db.Key.from_path('Post', int(post_id), parent=blog_key())
             post = db.get(key)
+
+            #if post does not exist show error
+            if not post:
+                self.error(404)
+                return
+
+            #set existing post attributes to new attributes
             post.subject = subject
             post.content = content
 
-            #update post with edits
-            post.put()
-
-            self.redirect('/blog/%s' % str(post.key().id()))
+            #user can only edit post they created
+            if self.user.key().id() == post.user_id:
+                post.put()
+                self.redirect('/blog/%s' % str(post.key().id()))
+            else:
+                error = "You do not have access to edit this post."
+                self.render("error.html", error = error)
         else:
             error = "subject and content, please!"
             self.render("editpost.html", subject=subject, content=content, error=error)
@@ -409,6 +423,7 @@ class DeletePost(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get post entity info
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
@@ -430,16 +445,27 @@ class DeletePost(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get post entity info and delete
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
         post = db.get(key)
 
-        post.delete()
+        #if post does not exist show error
+        if not post:
+            self.error(404)
+            return
 
-        #time delay before redirect to show changes on page
-        time.sleep(0.1)
-        self.redirect('/blog')
+        #user can only delete posts they created
+        if self.user.key().id() == post.user_id:
+            post.delete()
+
+            #time delay before redirect to show changes on page
+            time.sleep(0.1)
+            self.redirect('/blog')
+        else:
+            error = "You do not have access to delete this post."
+            self.render("error.html", error = error)
 
 
 ### Like post ###
@@ -448,6 +474,7 @@ class LikePost(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get post entity info
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
@@ -486,6 +513,7 @@ class UnlikePost(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get post entity info
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
@@ -528,6 +556,7 @@ class NewComment(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get post entity info
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
@@ -559,16 +588,18 @@ class EditComment(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get comment entity info
         key = db.Key.from_path('Comment', int(comment_id))
         comment = db.get(key)
-        comment_text = comment.comment_text
 
         #if comment does not exist show error
         if not comment:
             self.error(404)
             return
+
+        comment_text = comment.comment_text
 
         #user can only edit comments that they have created
         if self.user.key().id() == comment.user_id:
@@ -581,6 +612,7 @@ class EditComment(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get updated comment info from form
         comment_text = self.request.get('comment_text')
@@ -589,11 +621,22 @@ class EditComment(BlogHandler):
         if comment_text:
             key = db.Key.from_path('Comment', int(comment_id))
             comment = db.get(key)
+
+            #if comment does not exist show error
+            if not comment:
+                self.error(404)
+                return
+
             comment.comment_text = comment_text
 
-            comment.put()
-            time.sleep(0.1)
-            self.redirect('/blog/%s' % post_id)
+            #user can only edit comments that they have created
+            if self.user.key().id() == comment.user_id:
+                comment.put()
+                time.sleep(0.1)
+                self.redirect('/blog/%s' % post_id)
+            else:
+                error = "You do not have access to edit this comment."
+                self.render("error.html", error = error)
         else:
             error = "comment cannot be blank!"
             self.render("editcomment.html", comment_text = comment_text, error=error)
@@ -605,6 +648,7 @@ class DeleteComment(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get comment entity info
         key = db.Key.from_path('Comment', int(comment_id))
@@ -626,15 +670,26 @@ class DeleteComment(BlogHandler):
         #if user not logged in redirect to login page
         if not self.user:
             self.redirect('/')
+            return
 
         #get comment entity info and delete
         key = db.Key.from_path('Comment', int(comment_id))
         comment = db.get(key)
 
-        comment.delete()
+        #if comment does not exist show error
+        if not comment:
+            self.error(404)
+            return
 
-        time.sleep(0.1)
-        self.redirect('/blog/%s' % post_id)
+        #user can only delete comments they created
+        if self.user.key().id() == comment.user_id:
+            comment.delete()
+
+            time.sleep(0.1)
+            self.redirect('/blog/%s' % post_id)
+        else:
+            error = "You do not have access to delete this comment."
+            self.render("error.html", error = error)
 
 
 app = webapp2.WSGIApplication([('/', Welcome),
